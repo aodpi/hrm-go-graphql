@@ -1,0 +1,38 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: 
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{ secrets.DOCKER_LOGIN }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: aodpi/hrm-go-graphql
+        tags: ${{ github.sha }}, latest
+        dockerfile: Dockerfile
+        add_git_labels: true
+        cache_froms: aodpi/hrm-go-graphql:latest
+    - name: Aks set context
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZ_CREDS }}
+        resource-group: DefaultResourceGroup-WEU
+        cluster-name: k8s-sandbox
+    - name: deploy api
+      uses: Azure/k8s-deploy@v1.2
+      with:
+        namespace: hrm-dev
+        manifests: |
+          deploy/k8s/1.deployment.yaml
+          deploy/k8s/2.service.yaml
+          deploy/k8s/4.hpa.yaml
+        images: aodpi/hrm-go-graphql:${{ github.sha }}
+        imagepullsecrets: regcred
