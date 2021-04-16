@@ -8,5 +8,5 @@ FROM alpine AS final
 WORKDIR /app
 ENV SERVER_ADDRESS=0.0.0.0:4000
 EXPOSE 4000
-COPY --from=build /src/main /src/config/dev.yaml  .
+COPY --from=build /src/main /src/config/dev.yaml  /app/
 CMD ["/app/main"]
