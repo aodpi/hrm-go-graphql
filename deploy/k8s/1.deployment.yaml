@@ -23,6 +23,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: HRM_GRPC_URL
+          value: "hrm-api:81"
         image: aodpi/hrm-go-graphql:latest
         imagePullPolicy: IfNotPresent
         name: hrm-go-graphql

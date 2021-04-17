@@ -5,41 +5,47 @@ package graph
 
 import (
 	"context"
-	"fmt"
+	"log"
 
+	"github.com/aodpi/hrm-go-graphql/v2/config"
 	"github.com/aodpi/hrm-go-graphql/v2/graph/generated"
 	"github.com/aodpi/hrm-go-graphql/v2/graph/model"
+	pb "github.com/aodpi/hrm-go-graphql/v2/grpc/generated/grpc/proto"
+	"google.golang.org/grpc"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
-}
+func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
+	config := config.GetConfig()
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return []*model.Todo{
-		{
-			ID:   "1",
-			Text: "Test text",
-			Done: true,
-			User: &model.User{
-				ID:   "1",
-				Name: "Test user",
-			},
-		},
-	}, nil
-}
+	conn, err := grpc.Dial(config.GetString("hrm.grpc.url"), grpc.WithInsecure(), grpc.WithBlock(), grpc.WithDefaultCallOptions())
 
-func (r *queryResolver) Todo(ctx context.Context, id string) (*model.Todo, error) {
-	return &model.Todo{
-		ID: "asdasdasd",
-	}, nil
-}
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
 
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+	defer conn.Close()
+
+	c := pb.NewTagsGServiceClient(conn)
+
+	response, err := c.GetTags(ctx, &pb.GetTagsRequest{})
+
+	if err != nil {
+		log.Fatalf("Could not get tags: %v", err)
+	}
+
+	var responseTags []*model.Tag
+
+	for _, s := range response.Tags {
+		responseTags = append(responseTags, &model.Tag{
+			ID:   s.Id,
+			Name: s.Name,
+		})
+	}
+
+	return responseTags, nil
+}
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "HRManagementSystem.Proto";
+option go_package = "github.com/aodpi/hrm-go-graphql/v2/grpc";
+
+service TagsGService {
+    rpc GetTags(GetTagsRequest) returns (GetTagsResponse);
+}
+
+message GetTagsRequest {
+
+}
+
+message Tag {
+	string id = 1;
+	string name = 2;
+}
+
+message GetTagsResponse {
+	repeated Tag tags = 1;
+}
