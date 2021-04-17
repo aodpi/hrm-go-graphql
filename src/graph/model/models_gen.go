@@ -3,6 +3,8 @@
 package model
 
 type Tag struct {
-	ID   string `json:"id"`
+	// The id of the tag (Guid)
+	ID string `json:"id"`
+	// The name of the tag
 	Name string `json:"name"`
 }

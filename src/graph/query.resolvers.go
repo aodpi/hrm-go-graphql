@@ -17,7 +17,7 @@ import (
 func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
 	config := config.GetConfig()
 
-	conn, err := grpc.Dial(config.GetString("hrm.grpc.url"), grpc.WithInsecure(), grpc.WithBlock(), grpc.WithDefaultCallOptions())
+	conn, err := grpc.Dial(config.GetString("hrm.grpc.url"), grpc.WithInsecure(), grpc.WithBlock())
 
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -33,16 +33,16 @@ func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
 		log.Fatalf("Could not get tags: %v", err)
 	}
 
-	var responseTags []*model.Tag
+	var tags []*model.Tag
 
 	for _, s := range response.Tags {
-		responseTags = append(responseTags, &model.Tag{
+		tags = append(tags, &model.Tag{
 			ID:   s.Id,
 			Name: s.Name,
 		})
 	}
-	log.Printf("successfully fetched tags")
-	return responseTags, nil
+
+	return tags, nil
 }
 
 // Query returns generated.QueryResolver implementation.

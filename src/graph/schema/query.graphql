@@ -1,0 +1,4 @@
+type Query {
+    """Fetch all available tags in the system"""
+    tags: [Tag!]!
+}
