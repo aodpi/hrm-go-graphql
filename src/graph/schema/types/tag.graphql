@@ -1,0 +1,6 @@
+type Tag {
+    """The id of the tag (Guid)"""
+    id: ID!
+    """The name of the tag"""
+    name: String!
+}

@@ -142,17 +142,50 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
+	{Name: "graph/schema/directives.graphql", Input: `# GQL Directives
+# This part is fairly necessary and is described in the gql documentation
+# https://gqlgen.com/config/
+directive @goModel(model: String, models: [String!]) on OBJECT
+    | INPUT_OBJECT
+    | SCALAR
+    | ENUM
+    | INTERFACE
+    | UNION
 
-type Tag {
-  id: ID!
-  name: String!
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
+`, BuiltIn: false},
+	{Name: "graph/schema/query.graphql", Input: `type Query {
+    """Fetch all available tags in the system"""
+    tags: [Tag!]!
 }
+`, BuiltIn: false},
+	{Name: "graph/schema/scalars.graphql", Input: `# resolves to time.Time
+scalar Time
 
-type Query {
-  tags: [Tag!]!
+# resolves to map[string]interface{}
+scalar Map
+
+# resolves to interface{}
+scalar Any
+
+# resolves to the following struct
+# type Upload struct {
+#      File     io.Reader
+#      Filename string
+#      Size int64
+# }
+scalar Upload
+`, BuiltIn: false},
+	{Name: "graph/schema/schema.graphql", Input: `schema {
+    query: Query
+}
+`, BuiltIn: false},
+	{Name: "graph/schema/types/tag.graphql", Input: `type Tag {
+    """The id of the tag (Guid)"""
+    id: ID!
+    """The name of the tag"""
+    name: String!
 }
 `, BuiltIn: false},
 }
@@ -2159,6 +2192,42 @@ func (ec *executionContext) unmarshalOString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
