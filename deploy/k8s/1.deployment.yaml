@@ -39,6 +39,16 @@ spec:
           limits:
             memory: 500M
             cpu: 250m
+        readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
         securityContext:
           allowPrivilegeEscalation: false
           capabilities: {}
