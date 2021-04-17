@@ -41,7 +41,7 @@ func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
 			Name: s.Name,
 		})
 	}
-
+	log.Printf("successfully fetched tags")
 	return responseTags, nil
 }
 
