@@ -27,7 +27,7 @@ func SetupRouter() *gin.Engine {
 			http.MethodGet,
 			http.MethodDelete,
 		},
-		AllowHeaders:     []string{"Origin"},
+		AllowHeaders:     []string{"Origin", "Authorization"},
 		AllowCredentials: true,
 	}))
 
