@@ -17,20 +17,22 @@ import (
 func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
 	config := config.GetConfig()
 
-	conn, err := grpc.Dial(config.GetString("hrm.grpc.url"), grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(config.GetString("hrm.grpc.url"), grpc.WithInsecure())
 
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Printf("did not connect: %v", err)
+		return nil, err
 	}
 
 	defer conn.Close()
 
 	c := pb.NewTagsGServiceClient(conn)
 
-	response, err := c.GetTags(ctx, &pb.GetTagsRequest{})
+	response, err := c.GetTags(context.Background(), &pb.GetTagsRequest{})
 
 	if err != nil {
-		log.Fatalf("Could not get tags: %v", err)
+		log.Printf("Could not get tags: %v", err)
+		return nil, err
 	}
 
 	var tags []*model.Tag

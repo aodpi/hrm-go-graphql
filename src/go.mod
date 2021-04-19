@@ -4,15 +4,9 @@ go 1.16
 
 require (
 	github.com/99designs/gqlgen v0.13.0
-	github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6 // indirect
-	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
 	github.com/gin-gonic/gin v1.7.1
 	github.com/spf13/viper v1.7.1
-	github.com/urfave/cli v1.20.0 // indirect
-	github.com/vektah/gqlparser v1.2.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.2.0
-	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
-	google.golang.org/grpc v1.37.0 // indirect
-	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
+	google.golang.org/grpc v1.37.0
+	google.golang.org/protobuf v1.26.0
 )
