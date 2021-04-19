@@ -27,8 +27,9 @@ func SetupRouter() *gin.Engine {
 			http.MethodGet,
 			http.MethodDelete,
 		},
-		AllowHeaders:     []string{"Origin", "Authorization"},
-		AllowCredentials: true,
+		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials:       true,
+		AllowBrowserExtensions: true,
 	}))
 
 	health := new(controllers.HealthController)
