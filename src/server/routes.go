@@ -8,6 +8,7 @@ import (
 	"github.com/aodpi/hrm-go-graphql/v2/controllers"
 	"github.com/aodpi/hrm-go-graphql/v2/graph"
 	"github.com/aodpi/hrm-go-graphql/v2/graph/generated"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,20 @@ func SetupRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"https://hrmdev.tk",
+			"http://localhost:4200",
+		},
+		AllowMethods: []string{
+			http.MethodPut,
+			http.MethodPost,
+			http.MethodGet,
+			http.MethodDelete,
+		},
+		AllowHeaders:     []string{"Origin"},
+		AllowCredentials: true,
+	}))
 
 	health := new(controllers.HealthController)
 
