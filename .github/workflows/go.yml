@@ -33,6 +33,6 @@ jobs:
         manifests: |
           deploy/k8s/1.deployment.yaml
           deploy/k8s/2.service.yaml
-          deploy/k8s/4.hpa.yaml
+          deploy/k8s/4.hpa.yaml 
         images: aodpi/hrm-go-graphql:${{ github.sha }}
         imagepullsecrets: regcred
