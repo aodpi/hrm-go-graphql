@@ -36,3 +36,4 @@ jobs:
           deploy/k8s/4.hpa.yaml 
         images: aodpi/hrm-go-graphql:${{ github.sha }}
         imagepullsecrets: regcred
+
